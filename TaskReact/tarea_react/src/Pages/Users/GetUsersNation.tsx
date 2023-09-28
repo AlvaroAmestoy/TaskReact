@@ -1,49 +1,52 @@
 import { useEffect, useState } from "react";
+import { useParams } from "react-router-dom";
 
 interface Users{
     name: string,
     email: string,
-    photo: {
-        front_default: string
-    },
+    photo: string
     nation: string,
 }
 
-function UsersData(){
-    const [data, setData] = useState<Users>({name: '', email: '', photo: {front_default: ''}, nation: ''});
+export const GetUsersNation = () => {
+    const [data, setData] = useState<Users[]>([]);
+    const { regionCode } = useParams<{ regionCode?: string }>();
     useEffect(() => {
-        async function fetchData() {
-            const response = await fetch("https://randomuser.me/api/?nat=br");
-            setData(await response.json());
-        }
-        fetchData();
-    }, []);
-    return (
-        <div>
-            <h1>Data</h1>
-            <p>{data.name}</p>
-        </div>
-    );
-}
+        fetch(`https://randomuser.me/api/?results=3&nat=${regionCode}`)
+        .then(response => response.json())
+        .then(data => {
+            const mapUsers = data.results.map((result: any) => ({
+            name: `${result.name.first} ${result.name.last}`,
+            email: result.email,
+            photo: result.picture.large,
+            nation: result.nat,
+            }));
+            setData(mapUsers);
+        });
+    }, [regionCode]);
 
-function getParams() {
-    const queryParameters = new URLSearchParams(window.location.search)
-    const es = queryParameters.get("es")
-    const br = queryParameters.get("br")
-    const us = queryParameters.get("us")
-    return (
-        <><p>Nation: {es}</p><p>Nation: {br}</p><p>Nation: {us}</p></>
-    )
-}
-
-function GetUsersNation() {
-    return (
-        <>
-            <h1>Personas con nacionalidad: </h1>
-            {getParams()}
-            {UsersData()}
-        </>
-    )
-}
-
-export default GetUsersNation
+    if (data.length === 0) {
+        return (
+            <div>
+                <p>Cantidad de usuarios = 0</p>
+            </div>
+        );
+    } else {
+        return (
+            <div>
+                <h1>Usuarios de {regionCode}</h1>
+                {data.map((user, index) => (
+                    <div key={index}>
+                    <p>Nombre: {user.name}</p>
+                    <p>Email: {user.email}</p>
+                    <p>Foto de Perfil:</p>
+                    <img src={user.photo} alt={`Foto de ${user.name}`} />
+                    <p>País: {user.nation}</p>
+                    <hr />
+                </div>
+                ))}
+            </div>
+        );
+    }
+    
+};

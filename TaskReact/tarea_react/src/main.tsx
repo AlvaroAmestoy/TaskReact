@@ -4,7 +4,7 @@ import { createBrowserRouter,RouterProvider} from 'react-router-dom'
 import App from './App.tsx'
 import GetUsers from './Pages/Users/GetUsers.tsx'
 import './index.css'
-import GetUsersNation from './Pages/Users/GetUsersNation.tsx'
+import { GetUsersNation } from './Pages/Users/GetUsersNation.tsx'
 
 const router= createBrowserRouter([
   {
@@ -16,9 +16,9 @@ const router= createBrowserRouter([
     element:<GetUsers/>
   },
   {
-    path:"/users/:nation",
-    element:<GetUsersNation/>
-  }
+    path: '/users/:regionCode',
+    element: <GetUsersNation />,
+  },
 ])
 
 ReactDOM.createRoot(document.getElementById('root') as HTMLElement).render(

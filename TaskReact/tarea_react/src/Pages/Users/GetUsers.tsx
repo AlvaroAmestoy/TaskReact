@@ -1,8 +1,5 @@
 import { UsersData } from "./UsersApi"
 
-
-
-
 function GetUsers() {
     return (
         <>
